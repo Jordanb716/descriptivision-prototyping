@@ -1,4 +1,5 @@
 use std::convert::From;
+use std::ops::Add;
 
 pub struct Cartesian {      // The standard cartesian coordinate system
 	x: f32,
@@ -32,9 +33,9 @@ impl From<Spherical> for Cartesian{
 impl From<Cylindrical> for Cartesian {
     fn from(item: Cylindrical) -> Self {
      Cartesian {
-            x:,
-            y:,
-            z:
+            x:0.0,                         //semi complex :(
+            y:0.0,                         //semi complex :(
+            z:0.0                          //semi complex :(
         }
     }
 }
@@ -43,31 +44,31 @@ impl From<Spherical> for Cylindrical{
 	fn from(item: Spherical
 ) -> Self {
 		Cylindrical {
-			r:,                         //semi complex :(
+			r:0.0,                         //semi complex :(
 			phi:item.phi,
-			z:,                         //semi complex :(
+			z:0.0,                         //semi complex :(
 		}
 	}
 }
 
-impl From Cartesian> for Cylindrical {
+impl From <Cartesian> for Cylindrical {
     fn from(item: Cartesian) -> Self {
         Cylindrical {
             r:(item.x.powi(2)+item.y.powi(2)).sqrt(),
-            phi:,                       //semi complex :(
+            phi:0.0,                       //semi complex :(
             z:item.z
         }
     }
 }
 
-impl From Cartesian> for Spherical{
+impl From <Cartesian> for Spherical{
 	fn from(item: Cartesian) -> Self {
-		radius = (item.x.powi(2)+item.y.powi(2)+item.z.powi(2)).sqrt()
-		Spherical
-     {
+		let radius = (item.x.powi(2)+item.y.powi(2)+item.z.powi(2)).sqrt();
+	    return Spherical {
 			r:radius,
 			theta:(item.z/radius).acos(),
-			phi:(item.y/item.z).atan()}
+			phi:(item.y/item.z).atan()
+        }
 	}
 }
 
@@ -75,7 +76,7 @@ impl From<Cylindrical> for Spherical {
     fn from(item: Cylindrical) -> Self {
         Spherical
      {
-            r:,                     //semi complex :(
+            r:0.0,                     //semi complex :(
             theta:(item.r.powi(2)+item.z.powi(2)).sqrt(),
             phi:item.phi
         }
@@ -89,7 +90,7 @@ impl Add for Spherical {
         Self {
             r:self.r+other.r,
             theta:self.theta+other.theta,
-            phi:self.polar+other.polar
+            phi:self.phi+other.phi
         }
     }
 }
@@ -99,8 +100,8 @@ impl Add for Cylindrical {
 
     fn add(self, other: Self) -> Self {
         Self {
-            x:self.x+other.x,
-            y:self.y+other.y,
+            r:self.r+other.r,
+            phi:self.phi+other.phi,
             z:self.z+other.z
         }
     }

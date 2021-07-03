@@ -1,4 +1,4 @@
-use coordinate::Cartesian;
+use super::coordinate::Cartesian;
 
 pub struct CylindricalPolarRay {
 	pub angle: f32,

@@ -2,10 +2,11 @@ mod primitive;
 
 use rand::random;
 use std::time::Instant;
-use primative::coordinate::Cartesian;
-use primative::coordinate::Spherical;
-use primative::ray::SphericalPolarRay;
-use primative::ray::CylindricalPolarRay;
+use primitive::coordinate::Cartesian as CartCoord;
+use primitive::coordinate::Spherical as SphCoord;
+use primitive::ray as ray;
+use ray::SphericalPolarRay as SphRay;
+use ray::CylindricalPolarRay as CylRay;
 //use rand::Rng;
 
 struct SpatialResolution {
@@ -19,13 +20,13 @@ struct AngularResolution {
 }
 
 fn main() {
-	let eye_coordinates = Cartesian {
+	let eye_coordinates = CartCoord {
 		x: 10.0,
 		y: 0.0,
 		z: 0.0,
 	};
 
-	let sphere_coordinates = Cartesian {
+	let sphere_coordinates = CartCoord {
 		x: 0.0,
 		y: 0.0,
 		z: 0.0,
@@ -33,10 +34,11 @@ fn main() {
 
 	let sphere_radius = 1.0;
 
-	let mut ray_vec: Vec<CylindricalPolarRay> = Vec::new();
+	let mut ray_vec: Vec<CylRay> = Vec::new();
 
 	/*for _ in 1..100000 {
-		let temp_ray = CylindricalPolarRay {
+		let temp_ray = Cyl
+Ray {
 			angle: random::<f32>() * 360.0_f32.to_radians(),
 			height: random::<f32>() % 10.0,
 		};
@@ -45,7 +47,7 @@ fn main() {
 
 	for i in 0..360 {
 		let i = i as f32;
-		let temp_ray = CylindricalPolarRay {
+		let temp_ray = CylRay {
 			angle: i.to_radians(),
 			height: 0.0 /*random::<f32>() % 0.0*/,
 		};
@@ -82,66 +84,66 @@ field of view is an angle of view singular thus creating a square as this angle 
 given these 3 draw the object in a grid
 */
 fn spatial_resolution_scan_spherical(
-	eye_coord: &Cartesian,
-	direction:&SphericalPolarRay, 
-	object:&Cartesian, 
+	eye_coord: &CartCoord,
+	direction:&SphRay, 
+	object:&CartCoord, 
 	sphere_radius: f32,
-	fieldofview:&SphericalPolarRay,
+	fieldofview:&SphRay,
 	resolution:&SpatialResolution,
 ) {
 
 	let projection_radius = 1.0;
 
-	let angle_one = SphericalPolarRay {
+	let angle_one = SphRay {
 		azimuthal:direction.azimuthal-fieldofview.azimuthal/2.0,
 		polar:direction.polar
 	};
-	let angle_two = SphericalPolarRay {
+	let angle_two = SphRay {
 		azimuthal:direction.azimuthal,
 		polar:direction.polar-fieldofview.polar/2.0
 	};
 
 	let horz_proj_rad = 1;
 	let vert_proj_rad = 1;
-	let point_horz = Cartesian {
+	let point_horz = CartCoord {
 		x: projection_radius*angle_one.polar.to_radians().sin()*angle_one.azimuthal.cos(),
 		y: projection_radius*angle_one.polar.to_radians().sin()*angle_one.azimuthal.to_radians().sin(),
 		z: projection_radius*angle_one.polar.to_radians().cos()
 	};
-	let point_vert = Cartesian {
+	let point_vert = CartCoord {
 		x: projection_radius*angle_two.polar.to_radians().sin()*angle_two.azimuthal.cos(),
 		y: projection_radius*angle_two.polar.to_radians().sin()*angle_two.azimuthal.to_radians().sin(),
 		z: projection_radius*angle_two.polar.to_radians().cos()
 	};
-	let point_center = Cartesian {
+	let point_center = CartCoord {
 		x: projection_radius*direction.polar.to_radians().sin()*direction.azimuthal.cos(),
 		y: projection_radius*direction.polar.to_radians().sin()*direction.azimuthal.to_radians().sin(),
 		z: projection_radius*direction.polar.to_radians().cos()
 	};
 
-	let horizontal_direction = Cartesian {
-		x:0,
-		y:0,
-		z:0
+	let horizontal_direction = CartCoord {
+		x:0.0,
+		y:0.0,
+		z:0.0
 	};
-	let vertical_direction = Cartesian {
-		x:0,
-		y:0,
-		z:0
+	let vertical_direction = CartCoord {
+		x:0.0,
+		y:0.0,
+		z:0.0
 	};
 	/*loop object cast in field of view direct*/
 }
 
 fn angular_resolution_scan_spherical(
-	eye_coord: &Cartesian,
-	direction:&SphericalPolarRay, 
-	object:&Cartesian, 
+	eye_coord: &CartCoord,
+	direction:&SphRay, 
+	object:&CartCoord, 
 	sphere_radius: f32,
-	fieldofview:&SphericalPolarRay,
+	fieldofview:&SphRay,
 	resolution:&SpatialResolution
 ) {
 	let projection_radius = 1.0;
-	let start_ray = SphericalPolarRay {
+	let start_ray = SphRay {
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
 		polar:direction.polar-0.5*fieldofview.polar
 	};
@@ -150,38 +152,40 @@ fn angular_resolution_scan_spherical(
 	for i in 0..resolution.width {
 		for j in 0..resolution.height {
 			//convert to correct coords
-			let fire_point = Cartesian::from(Spherical {
+			let fire_point = CartCoord::from(SphCoord {
 				r:projection_radius,
-				azimuthal:start_ray.azimuthal+i*h_angle_delta,
-				polar:start_ray.polar+j*v_angle_delta
-			}) + eye_coord;
+				phi:start_ray.azimuthal+i*h_angle_delta,
+				theta:start_ray.polar+j*v_angle_delta
+			}) + *eye_coord;
 			//fire ray
-			let result = ray::cast_to_sphere(eye_coord, object, sphere_radius, fire_point);
+			let result = ray::cast_to_sphere(eye_coord, object, sphere_radius, &fire_point);
 			//record result
 		}
 	}
 }
 
 fn angular_resolution_scan_cylindrical(
-	eye_coord: &Cartesian,
-	direction:&SphericalPolarRay, 
-	object:&Cartesian, 
+	eye_coord: &CartCoord,
+	direction:&SphRay, 
+	object:&CartCoord, 
 	sphere_radius: f32,
-	fieldofview:&SphericalPolarRay,
+	fieldofview:&SphRay,
 	resolution:&SpatialResolution
 ) {
 	let projection_radius = 1.0;
-	let start_ray = SphericalPolarRay {
+	let start_ray = SphRay {
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
 		polar:direction.polar-0.5*fieldofview.polar
 	};
+	let h_angle_delta = fieldofview.azimuthal / resolution.width;
+	let v_angle_delta = fieldofview.polar / resolution.height;	
 	for i in 0..resolution.width {
 		for j in 0..resolution.height {
 			//convert to correct coords
-			let fire_point = Cartesian::from(Spherical {
+			let fire_point = CartCoord::from(SphCoord {
 				r:projection_radius,
-				azimuthal:start_ray.azimuthal+i*angle_delta,
-				polar:start_ray.polar+j*angle_delta
+				phi:start_ray.azimuthal+i*h_angle_delta,
+				theta:start_ray.polar+j*v_angle_delta
 			});
 			//fire ray
 			//record result
