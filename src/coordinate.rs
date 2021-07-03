@@ -1,0 +1,119 @@
+use std::convert::From;
+
+pub struct Cartesian {      // The standard cartesian coordinate system
+	x: f32,
+	y: f32,
+	z: f32,
+}
+
+pub struct Cylindrical {    // The three coordinates (ρ, φ, z) of a point P are defined as:
+	r: f32,             // The axial distance or radial distance ρ is the Euclidean distance from the z-axis to the point P.
+	phi: f32,           // The azimuth φ is the angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane.
+	z: f32              // The axial coordinate or height z is the signed distance from the chosen plane to the point P.
+}
+
+pub struct Spherical {      // To define a spherical coordinate system, one must choose two orthogonal directions, the zenith and the azimuth reference, and an origin point in space. These choices determine a reference plane that contains the origin and is perpendicular to the zenith. The spherical coordinates of a point P are then defined as follows:
+	r:f32,              // The radius or radial distance is the Euclidean distance from the origin O to P.
+	theta:f32,          // The inclination (or polar angle) is the angle between the zenith direction and the line segment OP.
+	phi:f32             // The azimuth (or azimuthal angle) is the signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment OP on the reference plane.
+}
+
+impl From<Spherical> for Cartesian{
+	fn from(item: Spherical
+) -> Self {
+	 Cartesian {
+			x:item.r*item.phi.to_radians().cos()*item.theta.to_radians().sin(),
+			y:item.r*item.phi.to_radians().sin()*item.theta.to_radians().sin(),
+			z:item.r*item.theta.to_radians().cos()
+		}
+	}
+}
+
+impl From<Cylindrical> for Cartesian {
+    fn from(item: Cylindrical) -> Self {
+     Cartesian {
+            x:,
+            y:,
+            z:
+        }
+    }
+}
+
+impl From<Spherical> for Cylindrical{
+	fn from(item: Spherical
+) -> Self {
+		Cylindrical {
+			r:,                         //semi complex :(
+			phi:item.phi,
+			z:,                         //semi complex :(
+		}
+	}
+}
+
+impl From Cartesian> for Cylindrical {
+    fn from(item: Cartesian) -> Self {
+        Cylindrical {
+            r:(item.x.powi(2)+item.y.powi(2)).sqrt(),
+            phi:,                       //semi complex :(
+            z:item.z
+        }
+    }
+}
+
+impl From Cartesian> for Spherical{
+	fn from(item: Cartesian) -> Self {
+		radius = (item.x.powi(2)+item.y.powi(2)+item.z.powi(2)).sqrt()
+		Spherical
+     {
+			r:radius,
+			theta:(item.z/radius).acos(),
+			phi:(item.y/item.z).atan()}
+	}
+}
+
+impl From<Cylindrical> for Spherical {
+    fn from(item: Cylindrical) -> Self {
+        Spherical
+     {
+            r:,                     //semi complex :(
+            theta:(item.r.powi(2)+item.z.powi(2)).sqrt(),
+            phi:item.phi
+        }
+    }
+}
+
+impl Add for Spherical {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            r:self.r+other.r,
+            theta:self.theta+other.theta,
+            phi:self.polar+other.polar
+        }
+    }
+}
+
+impl Add for Cylindrical {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x:self.x+other.x,
+            y:self.y+other.y,
+            z:self.z+other.z
+        }
+    }
+}
+
+impl Add for Cartesian {
+    type Output = Self;
+
+    fn add(self, other: Self) -> Self {
+        Self {
+            x:self.x+other.x,
+            y:self.y+other.y,
+            z:self.z+other.z
+        }
+    }
+}
