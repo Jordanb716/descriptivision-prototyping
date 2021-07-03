@@ -1,13 +1,12 @@
+mod primitive;
+
 use rand::random;
 use std::time::Instant;
-use coordinate::Cartesian;
-use coordinate::Spherical;
-use ray::SphericalPolarRay;
-use ray::CylindricalPolarRay;
+use primative::coordinate::Cartesian;
+use primative::coordinate::Spherical;
+use primative::ray::SphericalPolarRay;
+use primative::ray::CylindricalPolarRay;
 //use rand::Rng;
-
-mod ray;
-mod coordinate; 
 
 struct SpatialResolution {
 	width:i16,

@@ -1,7 +1,5 @@
 use coordinate::Cartesian;
 
-mod coordinate;
-
 pub struct CylindricalPolarRay {
 	pub angle: f32,
 	pub height: f32,
