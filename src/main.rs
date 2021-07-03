@@ -147,15 +147,15 @@ fn angular_resolution_scan_spherical(
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
 		polar:direction.polar-0.5*fieldofview.polar
 	};
-	let h_angle_delta = fieldofview.azimuthal / resolution.width;
-	let v_angle_delta = fieldofview.polar / resolution.height;	
+	let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
+	let v_angle_delta = fieldofview.polar / (resolution.height as f32);	
 	for i in 0..resolution.width {
 		for j in 0..resolution.height {
 			//convert to correct coords
 			let fire_point = CartCoord::from(SphCoord {
 				r:projection_radius,
-				phi:start_ray.azimuthal+i*h_angle_delta,
-				theta:start_ray.polar+j*v_angle_delta
+				phi:start_ray.azimuthal+(i as f32)*h_angle_delta,
+				theta:start_ray.polar+(j as f32)*v_angle_delta
 			}) + *eye_coord;
 			//fire ray
 			let result = ray::cast_to_sphere(eye_coord, object, sphere_radius, &fire_point);
@@ -177,15 +177,15 @@ fn angular_resolution_scan_cylindrical(
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
 		polar:direction.polar-0.5*fieldofview.polar
 	};
-	let h_angle_delta = fieldofview.azimuthal / resolution.width;
-	let v_angle_delta = fieldofview.polar / resolution.height;	
+	let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
+	let v_angle_delta = fieldofview.polar / (resolution.height as f32);	
 	for i in 0..resolution.width {
 		for j in 0..resolution.height {
 			//convert to correct coords
 			let fire_point = CartCoord::from(SphCoord {
 				r:projection_radius,
-				phi:start_ray.azimuthal+i*h_angle_delta,
-				theta:start_ray.polar+j*v_angle_delta
+				phi:start_ray.azimuthal+(i as f32)*h_angle_delta,
+				theta:start_ray.polar+(j as f32)*v_angle_delta
 			});
 			//fire ray
 			//record result
