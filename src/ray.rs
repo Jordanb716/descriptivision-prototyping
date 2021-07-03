@@ -1,18 +1,22 @@
+use coordinate::Cartesian;
+
+mod coordinate;
+
 pub struct CylindricalPolarRay {
-	angle: f32,
-	height: f32,
+	pub angle: f32,
+	pub height: f32,
 }
 
 pub struct SphericalPolarRay {
-	azimuthal: f32,
-	polar: f32
+	pub azimuthal: f32,
+	pub polar: f32
 }
 
 pub fn cast_to_sphere(
-	eye_coord: &CartCoord,
-	sphere_coord: &CartCoord,
+	eye_coord: &Cartesian,
+	sphere_coord: &Cartesian,
 	sphere_radius: f32,
-	ray_direction: &CartCoord,
+	ray_direction: &Cartesian,
 ) -> Option<f32> {
 
 	//Offset eye coordinates by target location so we can treat the sphere as the origin.

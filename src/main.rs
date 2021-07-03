@@ -57,7 +57,7 @@ fn main() {
 	let start_time = Instant::now();
 
 	for (i, ray) in ray_vec.iter().enumerate() {
-		let result = cast_to_sphere(&eye_coordinates, &sphere_coordinates, sphere_radius, &ray);
+		let result = ray::cast_to_sphere(&eye_coordinates, &sphere_coordinates, sphere_radius, &ray);
 		match result {
 			Some(x) => println!("{}: {}", i, x),
 			None => println!("{}: No Hit.", i),
@@ -88,36 +88,36 @@ fn spatial_resolution_scan_spherical(
 	object:&Cartesian, 
 	sphere_radius: f32,
 	fieldofview:&SphericalPolarRay,
-	resolution:&SpatialResolution
-) -> Option<f32> {
+	resolution:&SpatialResolution,
+) {
 
 	let projection_radius = 1.0;
 
 	let angle_one = SphericalPolarRay {
-		horz_angle:direction.horz_angle-fieldofview.horz_angle/2,
-		vert_angle:direction.vert_angle
+		azimuthal:direction.azimuthal-fieldofview.azimuthal/2.0,
+		polar:direction.polar
 	};
 	let angle_two = SphericalPolarRay {
-		horz_angle:direction.horz_angle,
-		vert_angle:direction.vert_angle-fieldofview.vert_angle/2
+		azimuthal:direction.azimuthal,
+		polar:direction.polar-fieldofview.polar/2.0
 	};
 
 	let horz_proj_rad = 1;
 	let vert_proj_rad = 1;
 	let point_horz = Cartesian {
-		x: projection_radius*angle_one.polar.to_radians.sin()*angle_one.azimuthal.cos(),
-		y: projection_radius*angle_one.polar.to_radians.sin()*angle_one.azimuthal.to_radians.sin(),
-		z: projection_radius*angle_one.polar.to_radians.cos()
+		x: projection_radius*angle_one.polar.to_radians().sin()*angle_one.azimuthal.cos(),
+		y: projection_radius*angle_one.polar.to_radians().sin()*angle_one.azimuthal.to_radians().sin(),
+		z: projection_radius*angle_one.polar.to_radians().cos()
 	};
 	let point_vert = Cartesian {
-		x: projection_radius*angle_two.polar.to_radians.sin()*angle_two.azimuthal.cos(),
-		y: projection_radius*angle_two.polar.to_radians.sin()*angle_two.azimuthal.to_radians.sin(),
-		z: projection_radius*angle_two.polar.to_radians.cos()
+		x: projection_radius*angle_two.polar.to_radians().sin()*angle_two.azimuthal.cos(),
+		y: projection_radius*angle_two.polar.to_radians().sin()*angle_two.azimuthal.to_radians().sin(),
+		z: projection_radius*angle_two.polar.to_radians().cos()
 	};
 	let point_center = Cartesian {
-		x: projection_radius*direction.polar.to_radians.sin()*direction.azimuthal.cos(),
-		y: projection_radius*direction.polar.to_radians.sin()*direction.azimuthal.to_radians.sin(),
-		z: projection_radius*direction.polar.to_radians.cos()
+		x: projection_radius*direction.polar.to_radians().sin()*direction.azimuthal.cos(),
+		y: projection_radius*direction.polar.to_radians().sin()*direction.azimuthal.to_radians().sin(),
+		z: projection_radius*direction.polar.to_radians().cos()
 	};
 
 	let horizontal_direction = Cartesian {
@@ -140,7 +140,7 @@ fn angular_resolution_scan_spherical(
 	sphere_radius: f32,
 	fieldofview:&SphericalPolarRay,
 	resolution:&SpatialResolution
-) -> Option<f32> {
+) {
 	let projection_radius = 1.0;
 	let start_ray = SphericalPolarRay {
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
@@ -157,7 +157,7 @@ fn angular_resolution_scan_spherical(
 				polar:start_ray.polar+j*v_angle_delta
 			}) + eye_coord;
 			//fire ray
-			let result = cast_to_sphere(eye_coord, object, sphere_radius, fire_point);
+			let result = ray::cast_to_sphere(eye_coord, object, sphere_radius, fire_point);
 			//record result
 		}
 	}
@@ -170,16 +170,16 @@ fn angular_resolution_scan_cylindrical(
 	sphere_radius: f32,
 	fieldofview:&SphericalPolarRay,
 	resolution:&SpatialResolution
-) -> Option<f32> {
-	projection_radius = 1.0;
-	start_ray = SphericalPolarRay {
+) {
+	let projection_radius = 1.0;
+	let start_ray = SphericalPolarRay {
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
 		polar:direction.polar-0.5*fieldofview.polar
 	};
 	for i in 0..resolution.width {
 		for j in 0..resolution.height {
 			//convert to correct coords
-			fire_point = Cartesian::from(Spherical {
+			let fire_point = Cartesian::from(Spherical {
 				r:projection_radius,
 				azimuthal:start_ray.azimuthal+i*angle_delta,
 				polar:start_ray.polar+j*angle_delta
