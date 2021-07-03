@@ -1,21 +1,11 @@
-struct CylindricalPolarRay {
+pub struct CylindricalPolarRay {
 	angle: f32,
 	height: f32,
 }
 
-struct SphericalPolarRay {
+pub struct SphericalPolarRay {
 	azimuthal: f32,
 	polar: f32
-}
-
-struct SpacialResolution {
-	width:,
-	height:
-}
-
-struct AngularResolution {
-	horizontal:,
-	vertical:
 }
 
 pub fn cast_to_sphere(

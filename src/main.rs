@@ -3,6 +3,7 @@ use std::time::Instant;
 use coordinate::Cartesian;
 use coordinate::Spherical;
 use ray::SphericalPolarRay;
+use ray::CylindricalPolarRay;
 //use rand::Rng;
 
 mod ray;
