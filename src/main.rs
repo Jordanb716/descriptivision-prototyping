@@ -1,5 +1,6 @@
 mod primitive;
 
+use colored::*;
 use rand::random;
 use std::time::Instant;
 use primitive::coordinate::Cartesian as CartCoord;
@@ -189,6 +190,15 @@ fn angular_resolution_scan_cylindrical(
 			});
 			//fire ray
 			//record result
+		}
+	}
+}
+
+fn diplayGrid(vec: &Vec<Vec<u8>>) {
+	//clear terminal
+	for line in vec {
+		for pixel in line {
+			
 		}
 	}
 }
