@@ -1,6 +1,5 @@
 mod primitive;
 
-use colored::*;
 //use rand::random;
 use primitive::coordinate::Cartesian as CartCoord;
 use primitive::coordinate::Spherical as SphCoord;
@@ -22,8 +21,8 @@ fn main() {
     };
 
     let sphere_coordinates = CartCoord {
-        x: 10.0,
-        y: 0.0,
+        x: 0.0,
+        y: 10.0,
         z: 0.0,
     };
 
@@ -102,13 +101,16 @@ fn angular_resolution_scan_spherical(
     fieldofview: &SphRay,
     resolution: &SpatialResolution,
 ) -> Vec<Vec<Option<f32>>> {
+    println!("function entered");
     let projection_radius = 1.0;
     let start_ray = SphRay {
         azimuthal: direction.azimuthal - 0.5 * fieldofview.azimuthal,
         polar: direction.polar - 0.5 * fieldofview.polar,
     };
     let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
+    println!("Horizontal Angular delta: {}", h_angle_delta);
     let v_angle_delta = fieldofview.polar / (resolution.height as f32);
+    println!("Vertical Angular delta: {}", h_angle_delta);
     let mut view: Vec<Vec<Option<f32>>> = std::vec::Vec::new();
     for j in 0..resolution.height {
         let mut row: Vec<Option<f32>> = std::vec::Vec::new();
@@ -133,13 +135,13 @@ fn angular_resolution_scan_spherical(
 }
 
 fn diplay_grid(vec: Vec<Vec<Option<f32>>>) {
-    let pixel_char = "█";
-    let empty_char = " ".black();
+    //let pixel_char = "█";
+    let empty_char = " ";
     print!("\x1B[2J\x1B[1;1H"); //clear terminal
     for line in vec {
         for result in line {
             match result {
-                Some(x) => print!("{}", pixel_char),
+                Some(x) => print!("{}", x),
                 None => print!("{}", empty_char),
             }
         }
