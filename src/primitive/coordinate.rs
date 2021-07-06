@@ -142,3 +142,21 @@ impl Add for Cartesian {
         }
     }
 }
+
+impl std::fmt::Display for Cartesian {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"(x:{},y:{},z:{})",self.x,self.y,self.z)
+    }
+}
+
+impl std::fmt::Display for Spherical {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"(r:{},θ:{},φ:{})",self.r,self.theta,self.phi)
+    }
+}
+
+impl std::fmt::Display for Cylindrical {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        write!(f,"(ρ:{},φ:{},z:{})",self.r,self.phi,self.z)
+    }
+}
