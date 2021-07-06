@@ -20,6 +20,9 @@ struct AngularResolution {
 	vertical:i16
 }
 
+static mut min_found:f32 = 0.0;
+static mut max_found:f32 = 0.0;
+
 fn main() {
 	let eye_coordinates = CartCoord {
 		x: 10.0,
@@ -142,7 +145,7 @@ fn angular_resolution_scan_spherical(
 	sphere_radius: f32,
 	fieldofview:&SphRay,
 	resolution:&SpatialResolution
-) {
+) -> Vec<Vec<f32>> {
 	let projection_radius = 1.0;
 	let start_ray = SphRay {
 		azimuthal:direction.azimuthal-0.5*fieldofview.azimuthal, 
@@ -150,7 +153,9 @@ fn angular_resolution_scan_spherical(
 	};
 	let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
 	let v_angle_delta = fieldofview.polar / (resolution.height as f32);	
+	let mut view:Vec<Vec<f32>> = std::vec::Vec::new();
 	for i in 0..resolution.width {
+		let row:Vec<f32> = std::vec::Vec::new();
 		for j in 0..resolution.height {
 			//convert to correct coords
 			let fire_point = CartCoord::from(SphCoord {
@@ -158,11 +163,11 @@ fn angular_resolution_scan_spherical(
 				phi:start_ray.azimuthal+(i as f32)*h_angle_delta,
 				theta:start_ray.polar+(j as f32)*v_angle_delta
 			}) + *eye_coord;
-			//fire ray
-			let result = ray::cast_to_sphere(eye_coord, object, sphere_radius, &fire_point);
-			//record result
+			//fire ray and record result
+			row.push(ray::cast_to_sphere(eye_coord, object, sphere_radius, &fire_point));
 		}
 	}
+	return view;
 }
 
 fn angular_resolution_scan_cylindrical(
@@ -195,10 +200,17 @@ fn angular_resolution_scan_cylindrical(
 }
 
 fn diplayGrid(vec: &Vec<Vec<u8>>) {
-	//clear terminal
+	let pixel_char = "█";
+	let empty_char = " ".black();
+	let diff = max_found - min_found;
+	if diff <= 0.0 {
+		return;
+	}
+	print!("\x1B[2J\x1B[1;1H");		//clear terminal
 	for line in vec {
-		for pixel in line {
-			
+		for color in line {
+			print!("{}",if color > &(0 as u8) { pixel_char.truecolor(*color,*color,*color) } else { empty_char });
 		}
+		println!("")
 	}
 }
