@@ -25,29 +25,43 @@ static mut max_found:f32 = 0.0;
 
 fn main() {
 	let eye_coordinates = CartCoord {
-		x: 10.0,
+		x: 0.0,
 		y: 0.0,
 		z: 0.0,
 	};
 
 	let sphere_coordinates = CartCoord {
-		x: 0.0,
+		x: 10.0,
 		y: 0.0,
 		z: 0.0,
 	};
 
 	let sphere_radius = 1.0;
 
-	let mut ray_vec: Vec<CylRay> = Vec::new();
+	let direction = SphRay {
+		azimuthal:0.0,
+		polar:0.0
+	};
 
-	/*for _ in 1..100000 {
-		let temp_ray = Cyl
-Ray {
+	let fov = SphRay {
+		azimuthal:90.0,
+		polar:60.0
+	};
+
+	let resolution = SpatialResolution {
+		width:31,
+		height:21
+	};
+
+	/*let mut ray_vec: Vec<CylRay> = Vec::new();
+
+	for _ in 1..100000 {
+		let temp_ray = CylRay {
 			angle: random::<f32>() * 360.0_f32.to_radians(),
 			height: random::<f32>() % 10.0,
 		};
 		ray_vec.push(temp_ray);
-	}*/
+	}
 
 	for i in 0..360 {
 		let i = i as f32;
@@ -56,18 +70,20 @@ Ray {
 			height: 0.0 /*random::<f32>() % 0.0*/,
 		};
 		ray_vec.push(temp_ray);
-	}
+	}*/
 
 	//Start test
 	let start_time = Instant::now();
 
-	for (i, ray) in ray_vec.iter().enumerate() {
+	/*for (i, ray) in ray_vec.iter().enumerate() {
 		let result = ray::cast_to_sphere(&eye_coordinates, &sphere_coordinates, sphere_radius, &ray);
 		match result {
 			Some(x) => println!("{}: {}", i, x),
 			None => println!("{}: No Hit.", i),
 		}
-	}
+	}*/
+
+	diplayGrid(angular_resolution_scan_spherical(&eye_coordinates,&direction,&sphere_coordinates,sphere_radius,&fov,&resolution));
 
 	let test_time = start_time.elapsed();
 	println!("Time taken: {:?}.", test_time);
@@ -155,7 +171,7 @@ fn angular_resolution_scan_spherical(
 	let v_angle_delta = fieldofview.polar / (resolution.height as f32);	
 	let mut view:Vec<Vec<Option<f32>>> = std::vec::Vec::new();
 	for j in 0..resolution.height {
-		let row:Vec<Option<f32>> = std::vec::Vec::new();
+		let mut row:Vec<Option<f32>> = std::vec::Vec::new();
 		for i in 0..resolution.width {
 			//convert to correct coords
 			let fire_point = CartCoord::from(SphCoord {
@@ -202,14 +218,14 @@ fn angular_resolution_scan_cylindrical(
 
 fn grayscaleView(view: &Vec<Vec<f32>>) -> Vec<Vec<u8>> {
 	let mut grayscale:Vec<Vec<u8>> = std::vec::Vec::new();
-	let diff = max_found - min_found;
+	/*let diff = max_found - min_found;
 	if diff <= 0.0 {
-//		return;
-	}
+		return;
+	}*/
 	return grayscale;
 }
 
-fn diplayGrid(vec: &Vec<Vec<Option<f32>>>) {
+fn diplayGrid(vec: Vec<Vec<Option<f32>>>) {
 	let pixel_char = "█";
 	let empty_char = " ".black();
 	print!("\x1B[2J\x1B[1;1H");		//clear terminal
