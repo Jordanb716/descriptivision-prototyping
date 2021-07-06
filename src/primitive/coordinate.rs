@@ -2,21 +2,21 @@ use std::convert::From;
 use std::ops::Add;
 
 pub struct Cartesian {      // The standard cartesian coordinate system
-	x: f32,
-	y: f32,
-	z: f32,
+	pub x: f32,
+	pub y: f32,
+	pub z: f32,
 }
 
 pub struct Cylindrical {    // The three coordinates (ρ, φ, z) of a point P are defined as:
-	r: f32,             // The axial distance or radial distance ρ is the Euclidean distance from the z-axis to the point P.
-	phi: f32,           // The azimuth φ is the angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane.
-	z: f32              // The axial coordinate or height z is the signed distance from the chosen plane to the point P.
+	pub r: f32,             // The axial distance or radial distance ρ is the Euclidean distance from the z-axis to the point P.
+	pub phi: f32,           // The azimuth φ is the angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane.
+	pub z: f32              // The axial coordinate or height z is the signed distance from the chosen plane to the point P.
 }
 
 pub struct Spherical {      // To define a spherical coordinate system, one must choose two orthogonal directions, the zenith and the azimuth reference, and an origin point in space. These choices determine a reference plane that contains the origin and is perpendicular to the zenith. The spherical coordinates of a point P are then defined as follows:
-	r:f32,              // The radius or radial distance is the Euclidean distance from the origin O to P.
-	theta:f32,          // The inclination (or polar angle) is the angle between the zenith direction and the line segment OP.
-	phi:f32             // The azimuth (or azimuthal angle) is the signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment OP on the reference plane.
+	pub r:f32,              // The radius or radial distance is the Euclidean distance from the origin O to P.
+	pub theta:f32,          // The inclination (or polar angle) is the angle between the zenith direction and the line segment OP.
+	pub phi:f32             // The azimuth (or azimuthal angle) is the signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment OP on the reference plane.
 }
 
 impl From<Spherical> for Cartesian{
