@@ -1,6 +1,8 @@
 use std::convert::From;
 use std::ops::Add;
 
+const PRECISION: usize = 2;
+
 pub struct Cartesian {
     // The standard cartesian coordinate system
     pub x: f32,
@@ -25,9 +27,9 @@ pub struct Spherical {
 impl From<Spherical> for Cartesian {
     fn from(item: Spherical) -> Self {
         Cartesian {
-            x: item.r * item.phi.to_radians().cos() * item.theta.to_radians().sin(),
-            y: item.r * item.phi.to_radians().sin() * item.theta.to_radians().sin(),
-            z: item.r * item.theta.to_radians().cos(),
+            x: item.r * item.phi.cos() * item.theta.sin(),
+            y: item.r * item.phi.sin() * item.theta.sin(),
+            z: item.r * item.theta.cos()
         }
     }
 }
@@ -151,12 +153,12 @@ impl std::fmt::Display for Cartesian {
 
 impl std::fmt::Display for Spherical {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f,"(r:{},θ:{},φ:{})",self.r,self.theta,self.phi)
+        write!(f,"(r:{},θ:{:.*},φ:{:.*})",self.r,PRECISION,self.theta.to_degrees(),PRECISION,self.phi.to_degrees())
     }
 }
 
 impl std::fmt::Display for Cylindrical {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f,"(ρ:{},φ:{},z:{})",self.r,self.phi,self.z)
+        write!(f,"(ρ:{},φ:{:.*},z:{})",self.r,PRECISION,self.phi.to_degrees(),self.z)
     }
 }
