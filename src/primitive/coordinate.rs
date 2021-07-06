@@ -83,6 +83,30 @@ impl From<Cylindrical> for Spherical {
     }
 }
 
+impl Copy for Cartesian {}
+
+impl Copy for Spherical {}
+
+impl Copy for Cylindrical {}
+
+impl Clone for Cartesian {
+    fn clone(&self) -> Cartesian {
+        *self
+    }
+}
+
+impl Clone for Spherical {
+    fn clone(&self) -> Spherical {
+        *self
+    }
+}
+
+impl Clone for Cylindrical {
+    fn clone(&self) -> Cylindrical {
+        *self
+    }
+}
+
 impl Add for Spherical {
     type Output = Self;
 
