@@ -29,8 +29,8 @@ fn main() {
     let sphere_radius = 1.0;
 
     let direction = SphRay {
-        azimuthal: (0.0f32).to_radians(),
-        polar: (0.0f32).to_radians()
+        azimuthal: (90.0f32).to_radians(),
+        polar: (90.0f32).to_radians()
     };
 
     let fov = SphRay {
@@ -39,8 +39,8 @@ fn main() {
     };
 
     let resolution = SpatialResolution {
-        width: 7,
-        height: 5,
+        width: 31,
+        height: 21,
     };
 
     /*let mut ray_vec: Vec<CylRay> = Vec::new();
@@ -108,9 +108,9 @@ fn angular_resolution_scan_spherical(
         polar: direction.polar - 0.5 * fieldofview.polar,
     };
     let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
-    println!("Horizontal Angular delta: {}", h_angle_delta);
+    //println!("Horizontal Angular delta: {}", h_angle_delta);
     let v_angle_delta = fieldofview.polar / (resolution.height as f32);
-    println!("Vertical Angular delta: {}", h_angle_delta);
+    //println!("Vertical Angular delta: {}", h_angle_delta);
     let mut view: Vec<Vec<Option<f32>>> = std::vec::Vec::new();
     for j in 0..resolution.height {
         let mut row: Vec<Option<f32>> = std::vec::Vec::new();
@@ -120,7 +120,7 @@ fn angular_resolution_scan_spherical(
                 phi: start_ray.azimuthal + (i as f32) * h_angle_delta,
                 theta: start_ray.polar + (j as f32) * v_angle_delta,
             };
-            print!("{}, ", ray);
+            //print!("{}, ", ray);
             //convert to correct coords
             let fire_point = CartCoord::from(ray) + *eye_coord;
             //fire ray and record result
@@ -138,13 +138,13 @@ fn angular_resolution_scan_spherical(
 }
 
 fn display_grid(vec: Vec<Vec<Option<f32>>>) {
-    //let pixel_char = "█";
+    let pixel_char = "█";
     let empty_char = " ";
-    //print!("\x1B[2J\x1B[1;1H"); //clear terminal
+    print!("\x1B[2J\x1B[1;1H"); //clear terminal
     for line in vec {
         for result in line {
             match result {
-                Some(x) => print!("{}", x),
+                Some(x) => print!("{}", pixel_char),
                 None => print!("{}", empty_char),
             }
         }
