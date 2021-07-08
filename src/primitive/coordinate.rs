@@ -13,23 +13,23 @@ pub struct Cartesian {
 pub struct Cylindrical {
     // The three coordinates (ρ, φ, z) of a point P are defined as:
     pub r: f32, // The axial distance or radial distance ρ is the Euclidean distance from the z-axis to the point P.
-    pub phi: f32, // The azimuth φ is the angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane.
+    pub azimuthal: f32, // The azimuth φ is the angle between the reference direction on the chosen plane and the line from the origin to the projection of P on the plane.
     pub z: f32, // The axial coordinate or height z is the signed distance from the chosen plane to the point P.
 }
 
 pub struct Spherical {
     // To define a spherical coordinate system, one must choose two orthogonal directions, the zenith and the azimuth reference, and an origin point in space. These choices determine a reference plane that contains the origin and is perpendicular to the zenith. The spherical coordinates of a point P are then defined as follows:
     pub r: f32, // The radius or radial distance is the Euclidean distance from the origin O to P.
-    pub theta: f32, // The inclination (or polar angle) is the angle between the zenith direction and the line segment OP.
-    pub phi: f32, // The azimuth (or azimuthal angle) is the signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment OP on the reference plane.
+    pub polar: f32, // The inclination (or polar angle) is the angle between the zenith direction and the line segment OP.
+    pub azimuthal: f32, // The azimuth (or azimuthal angle) is the signed angle measured from the azimuth reference direction to the orthogonal projection of the line segment OP on the reference plane.
 }
 
 impl From<Spherical> for Cartesian {
     fn from(item: Spherical) -> Self {
         Cartesian {
-            x: item.r * item.phi.cos() * item.theta.sin(),
-            y: item.r * item.phi.sin() * item.theta.sin(),
-            z: item.r * item.theta.cos()
+            x: item.r * item.azimuthal.cos() * item.polar.sin(),
+            y: item.r * item.azimuthal.sin() * item.polar.sin(),
+            z: item.r * item.polar.cos()
         }
     }
 }
@@ -48,7 +48,7 @@ impl From<Spherical> for Cylindrical {
     fn from(item: Spherical) -> Self {
         Cylindrical {
             r: 0.0, //semi complex :(
-            phi: item.phi,
+            azimuthal: item.azimuthal,
             z: 0.0, //semi complex :(
         }
     }
@@ -58,7 +58,7 @@ impl From<Cartesian> for Cylindrical {
     fn from(item: Cartesian) -> Self {
         Cylindrical {
             r: (item.x.powi(2) + item.y.powi(2)).sqrt(),
-            phi: 0.0, //semi complex :(
+            azimuthal: 0.0, //semi complex :(
             z: item.z,
         }
     }
@@ -69,8 +69,8 @@ impl From<Cartesian> for Spherical {
         let radius = (item.x.powi(2) + item.y.powi(2) + item.z.powi(2)).sqrt();
         return Spherical {
             r: radius,
-            theta: (item.z / radius).acos(),
-            phi: (item.y / item.z).atan(),
+            polar: (item.z / radius).acos(),
+            azimuthal: (item.y / item.z).atan(),
         };
     }
 }
@@ -79,8 +79,8 @@ impl From<Cylindrical> for Spherical {
     fn from(item: Cylindrical) -> Self {
         Spherical {
             r: 0.0, //semi complex :(
-            theta: (item.r.powi(2) + item.z.powi(2)).sqrt(),
-            phi: item.phi,
+            polar: (item.r.powi(2) + item.z.powi(2)).sqrt(),
+            azimuthal: item.azimuthal,
         }
     }
 }
@@ -115,8 +115,8 @@ impl Add for Spherical {
     fn add(self, other: Self) -> Self {
         Self {
             r: self.r + other.r,
-            theta: self.theta + other.theta,
-            phi: self.phi + other.phi,
+            polar: self.polar + other.polar,
+            azimuthal: self.azimuthal + other.azimuthal,
         }
     }
 }
@@ -127,7 +127,7 @@ impl Add for Cylindrical {
     fn add(self, other: Self) -> Self {
         Self {
             r: self.r + other.r,
-            phi: self.phi + other.phi,
+            azimuthal: self.azimuthal + other.azimuthal,
             z: self.z + other.z,
         }
     }
@@ -153,12 +153,12 @@ impl std::fmt::Display for Cartesian {
 
 impl std::fmt::Display for Spherical {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f,"(r:{},θ:{:.*},φ:{:.*})",self.r,PRECISION,self.theta.to_degrees(),PRECISION,self.phi.to_degrees())
+        write!(f,"(r:{},θ:{:.*},φ:{:.*})",self.r,PRECISION,self.polar.to_degrees(),PRECISION,self.azimuthal.to_degrees())
     }
 }
 
 impl std::fmt::Display for Cylindrical {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f,"(ρ:{},φ:{:.*},z:{})",self.r,PRECISION,self.phi.to_degrees(),self.z)
+        write!(f,"(ρ:{},φ:{:.*},z:{})",self.r,PRECISION,self.azimuthal.to_degrees(),self.z)
     }
 }

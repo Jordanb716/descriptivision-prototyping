@@ -117,8 +117,8 @@ fn angular_resolution_scan_spherical(
         for i in 0..resolution.width {
             let ray = SphCoord {
                 r: projection_radius,
-                phi: start_ray.azimuthal + (i as f32) * h_angle_delta,
-                theta: start_ray.polar + (j as f32) * v_angle_delta,
+                azimuthal: start_ray.azimuthal + (i as f32) * h_angle_delta,
+                polar: start_ray.polar + (j as f32) * v_angle_delta,
             };
             //print!("{}, ", ray);
             //convert to correct coords
