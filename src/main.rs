@@ -6,6 +6,9 @@ use primitive::coordinate::Spherical as SphCoord;
 use primitive::ray;
 use ray::SphericalPolarRay as SphRay;
 use std::time::Instant;
+use std::io::prelude::*;
+use std::fs::File;
+use std::path::Path;
 //use rand::Rng;
 
 struct SpatialResolution {
@@ -39,8 +42,21 @@ fn main() {
     };
 
     let resolution = SpatialResolution {
-        width: 31,
-        height: 21,
+        width: 61,
+        height: 41,
+    };
+
+    let path = Path::new("output.txt");
+    let display = path.display();
+    let mut file = match File::open(path) {
+        Err(why) => {
+            dbg!("couldn't open {}: {}", display, why);
+            match File::create(path) {
+                Err(why) => panic!("couldn't create {}: {}", display, why),
+                Ok(file) => file
+            }
+        },
+        Ok(file) => file,
     };
 
     /*let mut ray_vec: Vec<CylRay> = Vec::new();
@@ -80,19 +96,13 @@ fn main() {
         &fov,
         &resolution,
     );
-    print!("{}, {}", result.len(), result[0].len());
+    dbg!("{}, {}", result.len(), result[0].len());
     display_grid(result);
 
     let test_time = start_time.elapsed();
     println!("Time taken: {:?}.", test_time);
     println!("Time per cast: {:?}.", test_time / 100000);
 }
-
-/*
-fn cast_to_cylinder() {
-
-}
-*/
 
 fn angular_resolution_scan_spherical(
     eye_coord: &CartCoord,
@@ -108,9 +118,9 @@ fn angular_resolution_scan_spherical(
         polar: direction.polar - 0.5 * fieldofview.polar,
     };
     let h_angle_delta = fieldofview.azimuthal / (resolution.width as f32);
-    //println!("Horizontal Angular delta: {}", h_angle_delta);
+    dbg!("Horizontal Angular delta: {}", h_angle_delta);
     let v_angle_delta = fieldofview.polar / (resolution.height as f32);
-    //println!("Vertical Angular delta: {}", h_angle_delta);
+    dbg!("Vertical Angular delta: {}", h_angle_delta);
     let mut view: Vec<Vec<Option<f32>>> = std::vec::Vec::new();
     for j in 0..resolution.height {
         let mut row: Vec<Option<f32>> = std::vec::Vec::new();
@@ -120,7 +130,7 @@ fn angular_resolution_scan_spherical(
                 azimuthal: start_ray.azimuthal + (i as f32) * h_angle_delta,
                 polar: start_ray.polar + (j as f32) * v_angle_delta,
             };
-            //print!("{}, ", ray);
+            dbg!("{}, ", ray);
             //convert to correct coords
             let fire_point = CartCoord::from(ray) + *eye_coord;
             //fire ray and record result
@@ -131,7 +141,7 @@ fn angular_resolution_scan_spherical(
                 &fire_point,
             ));
         }
-        println!("");
+        dbg!("");
         view.push(row);
     }
     return view;
@@ -140,7 +150,22 @@ fn angular_resolution_scan_spherical(
 fn display_grid(vec: Vec<Vec<Option<f32>>>) {
     let pixel_char = "█";
     let empty_char = " ";
-    print!("\x1B[2J\x1B[1;1H"); //clear terminal
+    //print!("\x1B[2J\x1B[1;1H"); //clear terminal
+    for line in vec {
+        for result in line {
+            match result {
+                Some(x) => print!("{}", pixel_char),
+                None => print!("{}", empty_char),
+            }
+        }
+        println!("")
+    }
+}
+
+fn save_grid(vec: Vec<Vec<Option<f32>>>, file: File) {
+    let pixel_char = "█";
+    let empty_char = " ";
+    //print!("\x1B[2J\x1B[1;1H"); //clear terminal
     for line in vec {
         for result in line {
             match result {
