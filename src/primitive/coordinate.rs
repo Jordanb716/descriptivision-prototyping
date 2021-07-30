@@ -186,6 +186,99 @@ impl Add for Cartesian {
     }
 }
 
+///Implementation of the std::ops::Mul function for the struct primitive::coordinate::Cartesian
+///this implements the scalar multiplication operation for cartesianal points
+///k(x, y, z) = (kx, ky, kz) such that k is an element of the real numbers ie k is a scalar value
+impl Mul for Cartesian {
+    // The multiplication of rational numbers is a closed operation.
+    type Output = Self;
+
+    fn mul(self, scalar: f32) -> Self {
+        Self {
+            x:scalar * self.x,
+            y:scalar * self.y,
+            z:scalar * self.z,
+        }
+    }
+
+    fn mul(self, scalar: i32) -> Self {
+        mul(self, scalar as f32)
+    }
+}
+
+///Implementation of the std::ops::Mul function for the struct primitive::coordinate::Cylindrical
+///this implements the scalar multiplication operation for cylindrical points
+///k(ρ, φ, z) = (kρ, kφ, kz) such that k is an element of the real numbers ie k is a scalar value
+impl Mul for Cylindrical {
+    // The multiplication of rational numbers is a closed operation.
+    type Output = Self;
+
+    fn mul(self, scalar: f32) -> Self {
+        Self {
+            r:scalar * self.r,
+            azimuthal:scalar * self.azimuthal,
+            z:scalar * self.z,
+        }
+    }
+
+    fn mul(self, scalar: i32) -> Self {
+        mul(self, scalar as f32)
+    }
+}
+
+///Implementation of the std::ops::Mul function for the struct primitive::coordinate::Spherical
+///this implements the scalar multiplication operation for spherical points
+///k(ρ, φ, θ) = (kρ, kφ, kθ) such that k is an element of the real numbers ie k is a scalar value
+impl Mul for Spherical {
+    // The multiplication of rational numbers is a closed operation.
+    type Output = Self;
+
+    fn mul(self, scalar: f32) -> Self {
+        Self {
+            r:scalar * self.r,
+            azimuthal:scalar * self.azimuthal,
+            polar:scalar * self.polar,
+        }
+    }
+
+    fn mul(self, scalar: i32) -> Self {
+        mul(self, scalar as f32)
+    }
+}
+
+///Implementation of the std::ops::Sub function for the struct primitive::coordinate::Cartesian
+///this implements the subtraction operation for cartesian points
+///(x1, y1, z1) - (x2, y2, z2) = (x1-x2, y1-y2, z1-z2) = (x3, y3, z3)
+impl Sub for Cartesian {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        self + -1 * other 
+    }
+}
+
+///Implementation of the std::ops::Sub function for the struct primitive::coordinate::Cylindrical
+///this implements the subtraction operation for cylindrical points
+///(ρ1, φ1, z1) - (ρ2, φ2, z2) = (ρ1-ρ2, φ1-φ2, z1-z2) = (ρ3, φ3, z3)
+impl Sub for Cylindrical {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        self + -1 * other 
+    }
+}
+
+///Implementation of the std::ops::Sub function for the struct primitive::coordinate::Spherical
+///this implements the subtraction operation for spherical points
+///(ρ1, φ1, θ1) - (ρ2, φ2, θ2) = (ρ1-ρ2, φ1-φ2, θ1-θ2) = (ρ3, φ3, θ3)
+impl Sub for Spherical {
+    type Output = Self;
+
+    fn sub(self, other: Self) -> Self::Output {
+        self + -1 * other 
+    }
+}
+
 ///Implementation of the std::fmt::Display function for the struct primitive::coordinate::Cartesian
 ///pretty prints struct values in human readable coordinates
 impl std::fmt::Display for Cartesian {
