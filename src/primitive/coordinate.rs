@@ -45,41 +45,44 @@ impl From<Spherical> for Cartesian {
 
 ///Implementation of the std::convert::From function for the struct primitive::coordinate::Cartesian
 ///Allows conversion from Cylindrical coordinates to Cartesian coordinates
-///semi complex :(
-///semi complex :(
-///semi complex :(
 impl From<Cylindrical> for Cartesian {
     fn from(item: Cylindrical) -> Self {
         Cartesian {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
+            x: item.r * item.azimuthal.cos(),
+            y: item.r * item.azimuthal.sin(),
+            z: item.z,
         }
     }
 }
 
 ///Implementation of the std::convert::From function for the struct primitive::coordinate::Cylindrical
 ///Allows conversion from Spherical coordinates to Cylindrical coordinates
-///semi complex :(
-///semi complex :(
 impl From<Spherical> for Cylindrical {
     fn from(item: Spherical) -> Self {
         Cylindrical {
-            r: 0.0,
+            r: item.r * item.polar.cos(),
             azimuthal: item.azimuthal,
-            z: 0.0,
+            z: item.r * item.polar.sin(),
         }
     }
 }
 
 ///Implementation of the std::convert::From function for the struct primitive::coordinate::Cylindrical
 ///Allows conversion from Cartesian coordinates to Cylindrical coordinates
-///semi complex :(
 impl From<Cartesian> for Cylindrical {
     fn from(item: Cartesian) -> Self {
+        let rho = (item.x.powi(2) + item.y.powi(2)).sqrt();
+        let azimuthal:f32 = 0.0;
+        if item.x == 0 && item.y != 0 {
+            azimuthal = (item/rho).asin();
+        } else if item.x > 0 {
+            azimuthal = (item.y/rho).atan()
+        } else if item.x < 0 {
+            azimuthal = -1 * (item.y/rho).atan() + std::f64::consts::PI as f32;
+        }
         Cylindrical {
-            r: (item.x.powi(2) + item.y.powi(2)).sqrt(),
-            azimuthal: 0.0,
+            r: rho,
+            azimuthal: azimuthal,
             z: item.z,
         }
     }
@@ -100,12 +103,12 @@ impl From<Cartesian> for Spherical {
 
 ///Implementation of the std::convert::From function for the struct primitive::coordinate::Spherical
 ///Allows conversion from Cylindrical coordinates to Spherical coordinates
-///semi complex :(
 impl From<Cylindrical> for Spherical {
     fn from(item: Cylindrical) -> Self {
+        let rho = (item.r.powi(2) + item.z.powi(2)).sqrt();
         Spherical {
-            r: 0.0,
-            polar: (item.r.powi(2) + item.z.powi(2)).sqrt(),
+            r: rho,
+            polar: (item.r / item.z).atan(),
             azimuthal: item.azimuthal,
         }
     }
